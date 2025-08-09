@@ -23,10 +23,10 @@ If this is unclear, look at how the examples are constructed (in `examples/` fol
 #import test from ../../src/test.src
 #include number_incrementor.src
 
-test("Number Incrementer").expect("Adds 1 to 0 equals 1").is = function(assert)
+test("Number Incrementor").expect("Adds 1 to 0 equals 1").is = function(assert)
     assert.equals(number_incrementor(0), 1)
 end function
-test("Number Incrementer").expect("Adds 1 to string equals null").is = function(assert)
+test("Number Incrementor").expect("Adds 1 to string equals null").is = function(assert)
     assert.equals(number_incrementor("invalid"), null)
 end function
 test("Test Library").expect("FAIL with custom message").is = function(assert)
@@ -41,7 +41,7 @@ test()
 outputs (when ran)
 
 ```
-Number Incrementer
+Number Incrementor
   Adds 1 to 0 equals 1...[PASSED]
   Adds 1 to string equals null...[PASSED]
 Test Library
