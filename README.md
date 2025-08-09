@@ -3,6 +3,8 @@
 This project aims to provide developers with the ability to write simple and maintainable
 tests that can be ran on-demand during the development cycle.
 
+<img alt="gh_test_library" src="https://github.com/user-attachments/assets/9578d14e-56fc-4c8c-b698-c07c8f160375" />
+
 ## Requirements
 
 This project requires that you use the extension Greybel VS (`ayecue.greybel-vs`).
