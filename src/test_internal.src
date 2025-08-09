@@ -1,0 +1,33 @@
+#include ./shared/Constants.src
+
+#include ./runtime/Io.src
+#include ./runtime/Runtime.src
+#include ./runtime/TestCase.src
+
+// @type map<string, TestCase>
+__test_queue = {}
+
+// @description Run queued tests or generate and return a new TestCase.
+// @example test() // Triggers queued tests to run
+// @param {string|undefined} test_case_name - If undefined, run queued tests.
+// @return {Test|undefined} - Returns undefined when running tests otherwise TestCase.
+test = function(test_case_name)
+    // Running tests
+    if test_case_name == Constants.NULL then
+        Runtime.init()
+        Io.init()
+        queue = __test_queue
+        for test_case in queue.values()
+            Io.print(test_case.name)
+            test_case.run_tests()
+        end for
+        return
+    end if
+
+    // Creating/fetching test case by name
+    queue = __test_queue
+    if queue.hasIndex(test_case_name) then return queue[test_case_name]
+    test_case = TestCase.New(test_case_name)
+    queue[test_case_name] = test_case
+    return test_case
+end function

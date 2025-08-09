@@ -1,0 +1,5 @@
+#include ./Io.test.src
+#include ./LRUCache.test.src
+
+// Examples
+#include ./examples.test.src

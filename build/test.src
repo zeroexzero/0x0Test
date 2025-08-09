@@ -1,0 +1,1695 @@
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Io={"print_ref":@print,"stdio_cache":LRUCache,"stderr_cache":LRUCache}
+Io.override=function(new_ref)
+Io.print_ref=@new_ref
+end function
+Io.empty_cache=function
+Io.stdio_cache.empty
+Io.stderr_cache.empty
+end function
+Io.resize_cache=function(stdio_limit=8,stderr_limit=8)
+if stdio_limit==Constants.NULL then stdio_limit=default_cache_size
+if stderr_limit==Constants.NULL then stderr_limit=default_cache_size
+Io.stdio_cache.resize(stdio_limit)
+Io.stderr_cache.resize(stderr_limit)
+end function
+Io.reset=function(reset_print=true,reset_cache=true)
+if reset_print==true then Io.override(@print)
+if reset_cache==true then Io.resize_cache
+end function
+Io.print=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stdio_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.error=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stderr_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.init=function
+Io.stdio_cache=LRUCache.New(0)
+Io.stderr_cache=LRUCache.New(0)
+Io.reset
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Error={"is_fatal":true,"type":"INVALID_TYPE","message":"INVALID_MESSAGE"}
+Error.New=function(is_fatal=false,type="INVALID_TYPE",message="INVALID_MESSAGE")
+error=new Error
+error.is_fatal=is_fatal
+if is_fatal!=false and is_fatal!=true then error.is_fatal=true
+error.type=type
+if typeof(error.type)!="string" then error.type="INVALID_TYPE"
+error.message=message
+if typeof(error.message)!="string" then error.type="INVALID_MESSAGE"
+return error
+end function
+Error.fatal=function(message="")
+return Error.New(true,"fatal_error",message)
+end function
+Error.nonfatal=function(message="")
+return Error.New(false,"nonfatal_error",message)
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+Colors={}
+Colors.black=function(s)
+return "<color=black>"+s+"</color>"
+end function
+Colors.blue=function(s)
+return "<color=blue>"+s+"</color>"
+end function
+Colors.green=function(s)
+return "<color=green>"+s+"</color>"
+end function
+Colors.orange=function(s)
+return "<color=orange>"+s+"</color>"
+end function
+Colors.red=function(s)
+return "<color=red>"+s+"</color>"
+end function
+Colors.white=function(s)
+return "<color=white>"+s+"</color>"
+end function
+Colors.yellow=function(s)
+return "<color=yellow>"+s+"</color>"
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Error={"is_fatal":true,"type":"INVALID_TYPE","message":"INVALID_MESSAGE"}
+Error.New=function(is_fatal=false,type="INVALID_TYPE",message="INVALID_MESSAGE")
+error=new Error
+error.is_fatal=is_fatal
+if is_fatal!=false and is_fatal!=true then error.is_fatal=true
+error.type=type
+if typeof(error.type)!="string" then error.type="INVALID_TYPE"
+error.message=message
+if typeof(error.message)!="string" then error.type="INVALID_MESSAGE"
+return error
+end function
+Error.fatal=function(message="")
+return Error.New(true,"fatal_error",message)
+end function
+Error.nonfatal=function(message="")
+return Error.New(false,"nonfatal_error",message)
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Io={"print_ref":@print,"stdio_cache":LRUCache,"stderr_cache":LRUCache}
+Io.override=function(new_ref)
+Io.print_ref=@new_ref
+end function
+Io.empty_cache=function
+Io.stdio_cache.empty
+Io.stderr_cache.empty
+end function
+Io.resize_cache=function(stdio_limit=8,stderr_limit=8)
+if stdio_limit==Constants.NULL then stdio_limit=default_cache_size
+if stderr_limit==Constants.NULL then stderr_limit=default_cache_size
+Io.stdio_cache.resize(stdio_limit)
+Io.stderr_cache.resize(stderr_limit)
+end function
+Io.reset=function(reset_print=true,reset_cache=true)
+if reset_print==true then Io.override(@print)
+if reset_cache==true then Io.resize_cache
+end function
+Io.print=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stdio_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.error=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stderr_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.init=function
+Io.stdio_cache=LRUCache.New(0)
+Io.stderr_cache=LRUCache.New(0)
+Io.reset
+end function
+
+ErrorHandler={}
+ErrorHandler.handle=function(error,error_cache=null)
+if error==Constants.NULL then
+self.handle(Error.fatal("Unhandled error"),error_cache)
+return 
+end if
+if not error isa Error then
+self.handle(Error.fatal("Error: threw non-error"),error_cache)
+return 
+end if
+Io.error(Colors.red("Error("+error.type+"): "+error.message))
+if error_cache isa LRUCache then
+error_cache.insert(error)
+end if
+if error.is_fatal then
+Constants.NULL.happiness
+exit
+end if
+end function
+ErrorHandler.New=function
+handler=new ErrorHandler
+return handler
+end function
+
+Runtime={"error_handler":ErrorHandler,"error_cache":LRUCache}
+Runtime.throw=function(error)
+if not error isa Error then
+ferror=Error.fatal("Cannot throw non-error")
+Runtime.error_handler.handle(ferror,Runtime.error_cache)
+end if
+Runtime.error_handler.handle(error,Runtime.error_cache)
+end function
+Runtime.override_event_handler=function(error_handler)
+if not error_handler isa ErrorHandler then
+error=Error.fatal("Cannot override error handler with non-ErrorHandler")
+Runtime.error_handler.handle(error,Runtime.error_cache)
+end if
+Runtime.error_handler=error_handler
+end function
+Runtime.reset=function
+Runtime.error_handler=ErrorHandler.New
+Runtime.error_cache=LRUCache.New(8)
+end function
+Runtime.init=function
+Runtime.reset
+end function
+
+Colors={}
+Colors.black=function(s)
+return "<color=black>"+s+"</color>"
+end function
+Colors.blue=function(s)
+return "<color=blue>"+s+"</color>"
+end function
+Colors.green=function(s)
+return "<color=green>"+s+"</color>"
+end function
+Colors.orange=function(s)
+return "<color=orange>"+s+"</color>"
+end function
+Colors.red=function(s)
+return "<color=red>"+s+"</color>"
+end function
+Colors.white=function(s)
+return "<color=white>"+s+"</color>"
+end function
+Colors.yellow=function(s)
+return "<color=yellow>"+s+"</color>"
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+Error={"is_fatal":true,"type":"INVALID_TYPE","message":"INVALID_MESSAGE"}
+Error.New=function(is_fatal=false,type="INVALID_TYPE",message="INVALID_MESSAGE")
+error=new Error
+error.is_fatal=is_fatal
+if is_fatal!=false and is_fatal!=true then error.is_fatal=true
+error.type=type
+if typeof(error.type)!="string" then error.type="INVALID_TYPE"
+error.message=message
+if typeof(error.message)!="string" then error.type="INVALID_MESSAGE"
+return error
+end function
+Error.fatal=function(message="")
+return Error.New(true,"fatal_error",message)
+end function
+Error.nonfatal=function(message="")
+return Error.New(false,"nonfatal_error",message)
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Error={"is_fatal":true,"type":"INVALID_TYPE","message":"INVALID_MESSAGE"}
+Error.New=function(is_fatal=false,type="INVALID_TYPE",message="INVALID_MESSAGE")
+error=new Error
+error.is_fatal=is_fatal
+if is_fatal!=false and is_fatal!=true then error.is_fatal=true
+error.type=type
+if typeof(error.type)!="string" then error.type="INVALID_TYPE"
+error.message=message
+if typeof(error.message)!="string" then error.type="INVALID_MESSAGE"
+return error
+end function
+Error.fatal=function(message="")
+return Error.New(true,"fatal_error",message)
+end function
+Error.nonfatal=function(message="")
+return Error.New(false,"nonfatal_error",message)
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+Colors={}
+Colors.black=function(s)
+return "<color=black>"+s+"</color>"
+end function
+Colors.blue=function(s)
+return "<color=blue>"+s+"</color>"
+end function
+Colors.green=function(s)
+return "<color=green>"+s+"</color>"
+end function
+Colors.orange=function(s)
+return "<color=orange>"+s+"</color>"
+end function
+Colors.red=function(s)
+return "<color=red>"+s+"</color>"
+end function
+Colors.white=function(s)
+return "<color=white>"+s+"</color>"
+end function
+Colors.yellow=function(s)
+return "<color=yellow>"+s+"</color>"
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Error={"is_fatal":true,"type":"INVALID_TYPE","message":"INVALID_MESSAGE"}
+Error.New=function(is_fatal=false,type="INVALID_TYPE",message="INVALID_MESSAGE")
+error=new Error
+error.is_fatal=is_fatal
+if is_fatal!=false and is_fatal!=true then error.is_fatal=true
+error.type=type
+if typeof(error.type)!="string" then error.type="INVALID_TYPE"
+error.message=message
+if typeof(error.message)!="string" then error.type="INVALID_MESSAGE"
+return error
+end function
+Error.fatal=function(message="")
+return Error.New(true,"fatal_error",message)
+end function
+Error.nonfatal=function(message="")
+return Error.New(false,"nonfatal_error",message)
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Io={"print_ref":@print,"stdio_cache":LRUCache,"stderr_cache":LRUCache}
+Io.override=function(new_ref)
+Io.print_ref=@new_ref
+end function
+Io.empty_cache=function
+Io.stdio_cache.empty
+Io.stderr_cache.empty
+end function
+Io.resize_cache=function(stdio_limit=8,stderr_limit=8)
+if stdio_limit==Constants.NULL then stdio_limit=default_cache_size
+if stderr_limit==Constants.NULL then stderr_limit=default_cache_size
+Io.stdio_cache.resize(stdio_limit)
+Io.stderr_cache.resize(stderr_limit)
+end function
+Io.reset=function(reset_print=true,reset_cache=true)
+if reset_print==true then Io.override(@print)
+if reset_cache==true then Io.resize_cache
+end function
+Io.print=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stdio_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.error=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stderr_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.init=function
+Io.stdio_cache=LRUCache.New(0)
+Io.stderr_cache=LRUCache.New(0)
+Io.reset
+end function
+
+ErrorHandler={}
+ErrorHandler.handle=function(error,error_cache=null)
+if error==Constants.NULL then
+self.handle(Error.fatal("Unhandled error"),error_cache)
+return 
+end if
+if not error isa Error then
+self.handle(Error.fatal("Error: threw non-error"),error_cache)
+return 
+end if
+Io.error(Colors.red("Error("+error.type+"): "+error.message))
+if error_cache isa LRUCache then
+error_cache.insert(error)
+end if
+if error.is_fatal then
+Constants.NULL.happiness
+exit
+end if
+end function
+ErrorHandler.New=function
+handler=new ErrorHandler
+return handler
+end function
+
+Runtime={"error_handler":ErrorHandler,"error_cache":LRUCache}
+Runtime.throw=function(error)
+if not error isa Error then
+ferror=Error.fatal("Cannot throw non-error")
+Runtime.error_handler.handle(ferror,Runtime.error_cache)
+end if
+Runtime.error_handler.handle(error,Runtime.error_cache)
+end function
+Runtime.override_event_handler=function(error_handler)
+if not error_handler isa ErrorHandler then
+error=Error.fatal("Cannot override error handler with non-ErrorHandler")
+Runtime.error_handler.handle(error,Runtime.error_cache)
+end if
+Runtime.error_handler=error_handler
+end function
+Runtime.reset=function
+Runtime.error_handler=ErrorHandler.New
+Runtime.error_cache=LRUCache.New(8)
+end function
+Runtime.init=function
+Runtime.reset
+end function
+
+Assert={}
+Assert.error=function(message)
+return Error.New(false,"failed_assertion",message)
+end function
+Assert.is_true=function(subject,error_message)
+if @subject==true then return true
+message="Asserting "+str(@subject)+" is true."
+if error_message!=Constants.NULL then message=error_message
+error=Assert.error(message)
+Runtime.throw(error)
+return false
+end function
+Assert.is_false=function(subject,error_message)
+if @subject==false then return true
+message="Asserting "+str(@subject)+" is false."
+if error_message!=Constants.NULL then message=error_message
+error=Assert.error(message)
+Runtime.throw(error)
+return false
+end function
+Assert.equals=function(left,right,error_message)
+if @left==@right then return true
+message="Asserting "+str(@left)+" equals "+str(@right)+"."
+if error_message!=Constants.NULL then message=error_message
+error=Assert.error(message)
+Runtime.throw(error)
+return false
+end function
+Assert.not_equals=function(left,right,error_message)
+if @left!=@right then return true
+message="Asserting "+str(@left)+" not equals "+str(@right)+"."
+if error_message!=Constants.NULL then message=error_message
+error=Assert.error(message)
+Runtime.throw(error)
+return false
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Io={"print_ref":@print,"stdio_cache":LRUCache,"stderr_cache":LRUCache}
+Io.override=function(new_ref)
+Io.print_ref=@new_ref
+end function
+Io.empty_cache=function
+Io.stdio_cache.empty
+Io.stderr_cache.empty
+end function
+Io.resize_cache=function(stdio_limit=8,stderr_limit=8)
+if stdio_limit==Constants.NULL then stdio_limit=default_cache_size
+if stderr_limit==Constants.NULL then stderr_limit=default_cache_size
+Io.stdio_cache.resize(stdio_limit)
+Io.stderr_cache.resize(stderr_limit)
+end function
+Io.reset=function(reset_print=true,reset_cache=true)
+if reset_print==true then Io.override(@print)
+if reset_cache==true then Io.resize_cache
+end function
+Io.print=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stdio_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.error=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stderr_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.init=function
+Io.stdio_cache=LRUCache.New(0)
+Io.stderr_cache=LRUCache.New(0)
+Io.reset
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Error={"is_fatal":true,"type":"INVALID_TYPE","message":"INVALID_MESSAGE"}
+Error.New=function(is_fatal=false,type="INVALID_TYPE",message="INVALID_MESSAGE")
+error=new Error
+error.is_fatal=is_fatal
+if is_fatal!=false and is_fatal!=true then error.is_fatal=true
+error.type=type
+if typeof(error.type)!="string" then error.type="INVALID_TYPE"
+error.message=message
+if typeof(error.message)!="string" then error.type="INVALID_MESSAGE"
+return error
+end function
+Error.fatal=function(message="")
+return Error.New(true,"fatal_error",message)
+end function
+Error.nonfatal=function(message="")
+return Error.New(false,"nonfatal_error",message)
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+Colors={}
+Colors.black=function(s)
+return "<color=black>"+s+"</color>"
+end function
+Colors.blue=function(s)
+return "<color=blue>"+s+"</color>"
+end function
+Colors.green=function(s)
+return "<color=green>"+s+"</color>"
+end function
+Colors.orange=function(s)
+return "<color=orange>"+s+"</color>"
+end function
+Colors.red=function(s)
+return "<color=red>"+s+"</color>"
+end function
+Colors.white=function(s)
+return "<color=white>"+s+"</color>"
+end function
+Colors.yellow=function(s)
+return "<color=yellow>"+s+"</color>"
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Error={"is_fatal":true,"type":"INVALID_TYPE","message":"INVALID_MESSAGE"}
+Error.New=function(is_fatal=false,type="INVALID_TYPE",message="INVALID_MESSAGE")
+error=new Error
+error.is_fatal=is_fatal
+if is_fatal!=false and is_fatal!=true then error.is_fatal=true
+error.type=type
+if typeof(error.type)!="string" then error.type="INVALID_TYPE"
+error.message=message
+if typeof(error.message)!="string" then error.type="INVALID_MESSAGE"
+return error
+end function
+Error.fatal=function(message="")
+return Error.New(true,"fatal_error",message)
+end function
+Error.nonfatal=function(message="")
+return Error.New(false,"nonfatal_error",message)
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Io={"print_ref":@print,"stdio_cache":LRUCache,"stderr_cache":LRUCache}
+Io.override=function(new_ref)
+Io.print_ref=@new_ref
+end function
+Io.empty_cache=function
+Io.stdio_cache.empty
+Io.stderr_cache.empty
+end function
+Io.resize_cache=function(stdio_limit=8,stderr_limit=8)
+if stdio_limit==Constants.NULL then stdio_limit=default_cache_size
+if stderr_limit==Constants.NULL then stderr_limit=default_cache_size
+Io.stdio_cache.resize(stdio_limit)
+Io.stderr_cache.resize(stderr_limit)
+end function
+Io.reset=function(reset_print=true,reset_cache=true)
+if reset_print==true then Io.override(@print)
+if reset_cache==true then Io.resize_cache
+end function
+Io.print=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stdio_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.error=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stderr_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.init=function
+Io.stdio_cache=LRUCache.New(0)
+Io.stderr_cache=LRUCache.New(0)
+Io.reset
+end function
+
+ErrorHandler={}
+ErrorHandler.handle=function(error,error_cache=null)
+if error==Constants.NULL then
+self.handle(Error.fatal("Unhandled error"),error_cache)
+return 
+end if
+if not error isa Error then
+self.handle(Error.fatal("Error: threw non-error"),error_cache)
+return 
+end if
+Io.error(Colors.red("Error("+error.type+"): "+error.message))
+if error_cache isa LRUCache then
+error_cache.insert(error)
+end if
+if error.is_fatal then
+Constants.NULL.happiness
+exit
+end if
+end function
+ErrorHandler.New=function
+handler=new ErrorHandler
+return handler
+end function
+
+Runtime={"error_handler":ErrorHandler,"error_cache":LRUCache}
+Runtime.throw=function(error)
+if not error isa Error then
+ferror=Error.fatal("Cannot throw non-error")
+Runtime.error_handler.handle(ferror,Runtime.error_cache)
+end if
+Runtime.error_handler.handle(error,Runtime.error_cache)
+end function
+Runtime.override_event_handler=function(error_handler)
+if not error_handler isa ErrorHandler then
+error=Error.fatal("Cannot override error handler with non-ErrorHandler")
+Runtime.error_handler.handle(error,Runtime.error_cache)
+end if
+Runtime.error_handler=error_handler
+end function
+Runtime.reset=function
+Runtime.error_handler=ErrorHandler.New
+Runtime.error_cache=LRUCache.New(8)
+end function
+Runtime.init=function
+Runtime.reset
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+Error={"is_fatal":true,"type":"INVALID_TYPE","message":"INVALID_MESSAGE"}
+Error.New=function(is_fatal=false,type="INVALID_TYPE",message="INVALID_MESSAGE")
+error=new Error
+error.is_fatal=is_fatal
+if is_fatal!=false and is_fatal!=true then error.is_fatal=true
+error.type=type
+if typeof(error.type)!="string" then error.type="INVALID_TYPE"
+error.message=message
+if typeof(error.message)!="string" then error.type="INVALID_MESSAGE"
+return error
+end function
+Error.fatal=function(message="")
+return Error.New(true,"fatal_error",message)
+end function
+Error.nonfatal=function(message="")
+return Error.New(false,"nonfatal_error",message)
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Error={"is_fatal":true,"type":"INVALID_TYPE","message":"INVALID_MESSAGE"}
+Error.New=function(is_fatal=false,type="INVALID_TYPE",message="INVALID_MESSAGE")
+error=new Error
+error.is_fatal=is_fatal
+if is_fatal!=false and is_fatal!=true then error.is_fatal=true
+error.type=type
+if typeof(error.type)!="string" then error.type="INVALID_TYPE"
+error.message=message
+if typeof(error.message)!="string" then error.type="INVALID_MESSAGE"
+return error
+end function
+Error.fatal=function(message="")
+return Error.New(true,"fatal_error",message)
+end function
+Error.nonfatal=function(message="")
+return Error.New(false,"nonfatal_error",message)
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+Colors={}
+Colors.black=function(s)
+return "<color=black>"+s+"</color>"
+end function
+Colors.blue=function(s)
+return "<color=blue>"+s+"</color>"
+end function
+Colors.green=function(s)
+return "<color=green>"+s+"</color>"
+end function
+Colors.orange=function(s)
+return "<color=orange>"+s+"</color>"
+end function
+Colors.red=function(s)
+return "<color=red>"+s+"</color>"
+end function
+Colors.white=function(s)
+return "<color=white>"+s+"</color>"
+end function
+Colors.yellow=function(s)
+return "<color=yellow>"+s+"</color>"
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Error={"is_fatal":true,"type":"INVALID_TYPE","message":"INVALID_MESSAGE"}
+Error.New=function(is_fatal=false,type="INVALID_TYPE",message="INVALID_MESSAGE")
+error=new Error
+error.is_fatal=is_fatal
+if is_fatal!=false and is_fatal!=true then error.is_fatal=true
+error.type=type
+if typeof(error.type)!="string" then error.type="INVALID_TYPE"
+error.message=message
+if typeof(error.message)!="string" then error.type="INVALID_MESSAGE"
+return error
+end function
+Error.fatal=function(message="")
+return Error.New(true,"fatal_error",message)
+end function
+Error.nonfatal=function(message="")
+return Error.New(false,"nonfatal_error",message)
+end function
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+__f_undefined=function(sac)
+return sac
+end function
+Constants={"EOL":char(10),"QUOTE":char(34),"PRETTY_PRINT_IDX_LIMIT":1024,"PRETTY_PRINT_DEPTH_LIMIT":64}
+Constants.NULL=__f_undefined
+
+LRUCache={"capacity":0,"cache":[]}
+LRUCache.size=function
+return self.cache.len
+end function
+LRUCache.shed=function(amount=1,offset=0)
+if typeof(amount)!="number" or amount<1 or floor(amount)!=amount then
+return false
+end if
+if typeof(offset)!="number" or offset<0 or floor(offset)!=offset then
+return false
+end if
+if self.size<offset+amount then
+return false
+end if
+for _ in range(0,amount-1)
+self.cache.remove(offset)
+end for
+return true
+end function
+LRUCache.resize=function(new_size)
+if typeof(new_size)!="number" or new_size<0 or floor(new_size)!=new_size then
+return false
+end if
+if self.size>new_size then self.shed(self.size-new_size)
+self.capacity=new_size
+return true
+end function
+LRUCache.insert=function(value)
+if value==Constants.NULL then return false
+if not self.capacity then return false
+if self.size>=self.capacity then self.shed
+self.cache.push(value)
+return true
+end function
+LRUCache.empty=function
+num_elements=self.size
+if num_elements then
+self.shed(num_elements)
+end if
+end function
+LRUCache.New=function(capacity)
+if typeof(capacity)!="number" or capacity<0 or floor(capacity)!=capacity then
+return false
+end if
+cache=new LRUCache
+cache.capacity=capacity
+cache.cache=[]
+return cache
+end function
+
+Io={"print_ref":@print,"stdio_cache":LRUCache,"stderr_cache":LRUCache}
+Io.override=function(new_ref)
+Io.print_ref=@new_ref
+end function
+Io.empty_cache=function
+Io.stdio_cache.empty
+Io.stderr_cache.empty
+end function
+Io.resize_cache=function(stdio_limit=8,stderr_limit=8)
+if stdio_limit==Constants.NULL then stdio_limit=default_cache_size
+if stderr_limit==Constants.NULL then stderr_limit=default_cache_size
+Io.stdio_cache.resize(stdio_limit)
+Io.stderr_cache.resize(stderr_limit)
+end function
+Io.reset=function(reset_print=true,reset_cache=true)
+if reset_print==true then Io.override(@print)
+if reset_cache==true then Io.resize_cache
+end function
+Io.print=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stdio_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.error=function(value="",replaceText=false)
+Io.print_ref(value,replaceText)
+Io.stderr_cache.insert({"value":value,"replaceText":replaceText})
+end function
+Io.init=function
+Io.stdio_cache=LRUCache.New(0)
+Io.stderr_cache=LRUCache.New(0)
+Io.reset
+end function
+
+ErrorHandler={}
+ErrorHandler.handle=function(error,error_cache=null)
+if error==Constants.NULL then
+self.handle(Error.fatal("Unhandled error"),error_cache)
+return 
+end if
+if not error isa Error then
+self.handle(Error.fatal("Error: threw non-error"),error_cache)
+return 
+end if
+Io.error(Colors.red("Error("+error.type+"): "+error.message))
+if error_cache isa LRUCache then
+error_cache.insert(error)
+end if
+if error.is_fatal then
+Constants.NULL.happiness
+exit
+end if
+end function
+ErrorHandler.New=function
+handler=new ErrorHandler
+return handler
+end function
+
+Runtime={"error_handler":ErrorHandler,"error_cache":LRUCache}
+Runtime.throw=function(error)
+if not error isa Error then
+ferror=Error.fatal("Cannot throw non-error")
+Runtime.error_handler.handle(ferror,Runtime.error_cache)
+end if
+Runtime.error_handler.handle(error,Runtime.error_cache)
+end function
+Runtime.override_event_handler=function(error_handler)
+if not error_handler isa ErrorHandler then
+error=Error.fatal("Cannot override error handler with non-ErrorHandler")
+Runtime.error_handler.handle(error,Runtime.error_cache)
+end if
+Runtime.error_handler=error_handler
+end function
+Runtime.reset=function
+Runtime.error_handler=ErrorHandler.New
+Runtime.error_cache=LRUCache.New(8)
+end function
+Runtime.init=function
+Runtime.reset
+end function
+
+Assert={}
+Assert.error=function(message)
+return Error.New(false,"failed_assertion",message)
+end function
+Assert.is_true=function(subject,error_message)
+if @subject==true then return true
+message="Asserting "+str(@subject)+" is true."
+if error_message!=Constants.NULL then message=error_message
+error=Assert.error(message)
+Runtime.throw(error)
+return false
+end function
+Assert.is_false=function(subject,error_message)
+if @subject==false then return true
+message="Asserting "+str(@subject)+" is false."
+if error_message!=Constants.NULL then message=error_message
+error=Assert.error(message)
+Runtime.throw(error)
+return false
+end function
+Assert.equals=function(left,right,error_message)
+if @left==@right then return true
+message="Asserting "+str(@left)+" equals "+str(@right)+"."
+if error_message!=Constants.NULL then message=error_message
+error=Assert.error(message)
+Runtime.throw(error)
+return false
+end function
+Assert.not_equals=function(left,right,error_message)
+if @left!=@right then return true
+message="Asserting "+str(@left)+" not equals "+str(@right)+"."
+if error_message!=Constants.NULL then message=error_message
+error=Assert.error(message)
+Runtime.throw(error)
+return false
+end function
+
+Test={"name":"MISSING"}
+Test.is=function(assert)
+assert.is_false(self.name==Test.name,"Must define test name.")
+assert.is_true(false,"Must define test logic.")
+end function
+Test.New=function(name)
+test=new Test
+if name!=Constants.NULL then test.name=name
+return test
+end function
+
+TestCase={"name":"MISSING","tests":[]}
+TestCase.setup=function
+no_print=function(value="",replaceText=0)
+return 
+end function
+Io.empty_cache
+Io.override(@no_print)
+end function
+TestCase.teardown=function
+Io.reset
+Runtime.error_cache.empty
+end function
+TestCase.expect=function(name="MISSING")
+self.tests.push(Test.New(name))
+return self.tests[-1]
+end function
+TestCase.run_tests=function
+for test in self.tests
+self.setup
+test.is(Assert)
+message="  "+test.name+"..."
+if Runtime.error_cache.size then
+message=message+"["+Colors.red("FAILED")+"]"
+for error in Runtime.error_cache.cache
+error_msg="("+error.type+"): "+error.message
+message=message+Constants.EOL+"    "+Colors.red(error_msg)
+end for
+else
+message=message+"["+Colors.green("PASSED")+"]"
+end if
+self.teardown
+Io.print(message)
+end for
+end function
+TestCase.New=function(name="MISSING")
+test_case=new TestCase
+test_case.name=name
+test_case.tests=[]
+return test_case
+end function
+
+__test_queue={}
+test=function(test_case_name)
+if test_case_name==Constants.NULL then
+Runtime.init
+Io.init
+queue=__test_queue
+for test_case in queue.values
+Io.print(test_case.name)
+test_case.run_tests
+end for
+return 
+end if
+queue=__test_queue
+if queue.hasIndex(test_case_name) then return queue[test_case_name]
+test_case=TestCase.New(test_case_name)
+queue[test_case_name]=test_case
+return test_case
+end function
+
+module.exports=@test

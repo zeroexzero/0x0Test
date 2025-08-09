@@ -1,0 +1,79 @@
+#include ../shared/Constants.src
+#include ../shared/LRUCache.src
+
+// @type ErrorHandler
+// @property {function} print_ref
+// @property {LRUCache} stdio_cache
+// @property {LRUCache} stderr_cache
+Io = {
+    "print_ref": @print,
+    "stdio_cache": LRUCache,
+    "stderr_cache": LRUCache,
+}
+
+// @description Replace Io's print function reference with another.
+// @example Io.override(@print)
+// @param {function} new_ref - Function reference to replace the current reference with.
+// @return {undefined}
+Io.override = function(new_ref)
+    Io.print_ref = @new_ref
+end function
+
+// @description Remove all entries from stdio and stderr caches.
+// @example Io.empty_cache()
+// @return {undefined}
+Io.empty_cache = function()
+    Io.stdio_cache.empty()
+    Io.stderr_cache.empty()
+end function
+
+// @description Change the capacity of the stdio and stderr caches.
+// @example Io.resize_cache()
+// @param {number} stdio_limit - New stdio cache capacity. Defaults to 8.
+// @param {number} stderr_limit - New stderr cache capacity. Defaults to 8.
+// @return {undefined}
+Io.resize_cache = function(stdio_limit = 8, stderr_limit = 8)
+    if stdio_limit == Constants.NULL then stdio_limit = default_cache_size
+    if stderr_limit == Constants.NULL then stderr_limit = default_cache_size
+    Io.stdio_cache.resize(stdio_limit)
+    Io.stderr_cache.resize(stderr_limit)
+end function
+
+// @description Reset Io's print function reference and/or caches.
+// @example Io.reset()
+// @param {number} reset_print - Reset the print function reference.
+// @param {number} reset_cache - Reset the caches.
+// @return {undefined}
+Io.reset = function(reset_print = true, reset_cache = true)
+    if reset_print == true then Io.override(@print)
+    if reset_cache == true then Io.resize_cache()
+end function
+
+// @description Call the current print function reference. Insert into io cache.
+// @example Io.print("Hello world!")
+// @param {string} value - The thing to print.
+// @param {number} replaceText - Clear the screen (on the oem/standard @print).
+// @return {undefined}
+Io.print = function(value = "", replaceText = false)
+    Io.print_ref(value, replaceText)
+    Io.stdio_cache.insert({ "value": value, "replaceText": replaceText })
+end function
+
+// @description Call the current print function reference. Insert into error cache.
+// @example Io.error("Oops!")
+// @param {string} value - The thing to print.
+// @param {number} replaceText - Clear the screen (on the oem/standard @print).
+// @return {undefined}
+Io.error = function(value = "", replaceText = false)
+    Io.print_ref(value, replaceText)
+    Io.stderr_cache.insert({ "value": value, "replaceText": replaceText })
+end function
+
+// @description Setup the Io singleton to "base" settings.
+// @example Io.init()
+// @return {undefined}
+Io.init = function()
+    Io.stdio_cache = LRUCache.New(0)
+    Io.stderr_cache = LRUCache.New(0)
+    Io.reset()
+end function

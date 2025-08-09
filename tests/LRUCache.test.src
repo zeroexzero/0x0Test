@@ -1,0 +1,150 @@
+// Include test library so we may define tests
+#import test from ../src/test.src
+
+// The logic we're testing
+#include ../src/shared/LRUCache.src
+
+// Misc.
+#include ../src/shared/Constants.src
+
+test("LRUCache").expect("instantiates correctly").is = function(assert)
+    cache = LRUCache.New(0)
+    assert.is_true(cache isa LRUCache)
+end function
+
+test("LRUCache").expect("one instance doesn't modify another").is = function(assert)
+    first_cache = LRUCache.New(2)
+    second_cache = LRUCache.New(1)
+
+    assert.equals(2, first_cache.capacity)
+    assert.equals(0, first_cache.size())
+    assert.equals(1, second_cache.capacity)
+    assert.equals(0, second_cache.size())
+
+    first_cache.insert("first insert")
+    first_cache.insert("second insert")
+    second_cache.insert("third insert")
+
+    assert.equals(2, first_cache.capacity)
+    assert.equals(2, first_cache.size())
+    assert.equals(1, second_cache.capacity)
+    assert.equals(1, second_cache.size())
+
+    assert.equals("first insert", first_cache.cache[0])
+    assert.equals("third insert", second_cache.cache[0])
+end function
+
+test("LRUCache").expect("inserting beyond capacity sheds oldest").is = function(assert)
+    cache = LRUCache.New(2)
+
+    assert.is_true(cache.insert("first insert"))
+    assert.is_true(cache.insert("second insert"))
+
+    assert.equals("first insert", cache.cache[0])
+    assert.equals("second insert", cache.cache[1])
+
+    assert.is_true(cache.insert("third insert"))
+
+    assert.equals("second insert", cache.cache[0])
+    assert.equals("third insert", cache.cache[1])
+    assert.equals(2, cache.capacity)
+    assert.equals(2, cache.size())
+end function
+
+test("LRUCache").expect("0-capacity cache stores nothing").is = function(assert)
+    cache = LRUCache.New(0)
+    assert.equals(0, cache.capacity)
+    assert.equals(0, cache.size())
+    assert.equals(0, cache.cache.len())
+
+    assert.is_false(cache.insert("first insert"))
+    assert.equals(0, cache.capacity)
+    assert.equals(0, cache.size())
+    assert.equals(0, cache.cache.len())
+end function
+
+test("LRUCache").expect("shed drops 1 at 0 by default").is = function(assert)
+    cache = LRUCache.New(2)
+
+    assert.is_true(cache.insert("first insert"))
+    assert.is_true(cache.insert("second insert"))
+    assert.equals("first insert", cache.cache[0])
+    assert.equals("second insert", cache.cache[1])
+    assert.equals(2, cache.size())
+
+    assert.is_true(cache.shed())
+    assert.equals("second insert", cache.cache[0])
+    assert.equals(1, cache.size())
+end function
+
+test("LRUCache").expect("shed drops at offset").is = function(assert)
+    cache = LRUCache.New(2)
+
+    assert.is_true(cache.insert("first insert"))
+    assert.is_true(cache.insert("second insert"))
+    assert.equals("first insert", cache.cache[0])
+    assert.equals("second insert", cache.cache[1])
+    assert.equals(2, cache.size())
+
+    assert.is_true(cache.shed(1, 1))
+    assert.equals("first insert", cache.cache[0])
+    assert.equals(1, cache.size())
+end function
+
+test("LRUCache").expect("shed only takes positive integers").is = function(assert)
+    cache = LRUCache.New(2)
+
+    assert.is_true(cache.insert("first insert"))
+    assert.is_true(cache.insert("second insert"))
+
+    assert.is_false(cache.shed(1.1, 0))
+    assert.is_false(cache.shed(1.1, 1))
+    assert.is_false(cache.shed(1, 1.1))
+    assert.is_false(cache.shed(-1))
+    assert.is_false(cache.shed("A"))
+    assert.is_true(cache.shed())
+end function
+
+test("LRUCache").expect("resize can enlarge").is = function(assert)
+    cache = LRUCache.New(0)
+    assert.equals(0, cache.size())
+    assert.equals(0, cache.capacity)
+
+    assert.is_true(cache.resize(1))
+    assert.equals(0, cache.size())
+    assert.equals(1, cache.capacity)
+    assert.is_true(cache.insert("first insert"))
+    assert.equals(1, cache.size())
+    assert.equals(1, cache.capacity)
+end function
+
+test("LRUCache").expect("resize can shrink").is = function(assert)
+    cache = LRUCache.New(1)
+    assert.equals(0, cache.size())
+    assert.equals(1, cache.capacity)
+    assert.is_true(cache.insert("first insert"))
+    assert.equals(1, cache.size())
+    assert.equals(1, cache.capacity)
+
+    assert.is_true(cache.resize(0))
+    assert.equals(0, cache.size())
+    assert.equals(0, cache.capacity)
+    assert.is_false(cache.insert("first insert"))
+    assert.equals(0, cache.size())
+    assert.equals(0, cache.capacity)
+end function
+
+test("LRUCache").expect("empty removes all cache items").is = function(assert)
+    cache = LRUCache.New(12)
+    for idx in range(1,12)
+        cache.insert("Element number " + str(idx))
+    end for
+    assert.equals(12, cache.size())
+    assert.equals(12, cache.capacity)
+    cache.empty()
+    assert.equals(0, cache.size())
+    assert.equals(0, cache.cache.len())
+    assert.equals(12, cache.capacity)
+end function
+
+test()

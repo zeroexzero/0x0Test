@@ -1,0 +1,49 @@
+#include ../shared/Constants.src
+#include ../shared/Colors.src
+#include ../shared/LRUCache.src
+
+#include ./Error.src
+#include ./Io.src
+
+// @type ErrorHandler
+ErrorHandler = {}
+
+// @description Handle a given Error object.
+// @example error_handler.handle(Error.fatal("runtime error"))
+// @param {Error} error - The Error object to handle.
+// @param {LRUCache|null} error_cache - A cache to populate with the error, if provided.
+// @return {Error|undefined} - undefined if there's ErrorHandler or Error problem.
+ErrorHandler.handle = function(error, error_cache = null)
+    if error == Constants.NULL then
+        self.handle(Error.fatal("Unhandled error"), error_cache)
+        return
+    end if
+    if not error isa Error then
+        self.handle(Error.fatal("Error: threw non-error"), error_cache)
+        return
+    end if
+
+    Io.error(Colors.red("Error(" + error.type + "): " + error.message))
+
+    // Insert into cache if cache provided
+    if error_cache isa LRUCache then
+        error_cache.insert(error)
+    end if
+
+    // Goodbye
+    if error.is_fatal then
+        // Let's crash so we have a stack trace available
+        Constants.NULL.happiness()
+
+        // We shouldn't actually end up here
+        exit()
+    end if
+end function
+
+// @description Instantiate a new ErrorHandler object.
+// @example handler = ErrorHandler.New()
+// @return {ErrorHandler}
+ErrorHandler.New = function()
+    handler = new ErrorHandler
+    return handler
+end function

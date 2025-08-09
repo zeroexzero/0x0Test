@@ -1,0 +1,66 @@
+#include Constants.src
+
+// @type Utilities
+Utilities = {}
+
+// @description Generate a formatted string of the provided input.
+// @description maps and lists will recursively call, incrementing the `tab`.
+// @example Io.print(Utilities.pretty({"some_key": 1}))
+// @param {any} input - The data to make pretty.
+// @param {number} tab - The number of indentations to use for the `input`.
+// @return {string}
+Utilities.pretty = function(input, tab = 0)
+    if tab > Constants.PRETTY_PRINT_DEPTH_LIMIT then return "DEPTH LIMIT REACHED"
+    type = typeof(@input)
+    pretty = "unknown(" + type + ")"
+
+    ws = ""
+    for _ in range(0, tab)
+        ws = ws + "  "
+    end for
+    wsless = ""
+    if ws.len() >= 2 then
+        wsless = ws[2:]
+    end if
+
+    if type == "function" then
+        pretty = str(@input)
+
+    else if input isa map or input isa list then
+        pretty = ""
+        indices = []
+        if type == "list" then
+            indices = input.indexes()
+        else
+            for kv in input
+                indices.push(kv.key)
+            end for
+        end if
+        extra = ""
+        max_idx = Constants.PRETTY_PRINT_IDX_LIMIT
+        if indices.len() > max_idx then
+            indices = indices[:max_idx]
+        end if
+        for key in indices
+            value = null
+            pretty = pretty + ws + key + ": " + typeof(input[key]) + " = "
+            pretty = pretty + Utilities.pretty(@(input[key]), tab + 1)
+        end for
+        if input.indexes().len() > max_idx then
+            additional = input.indexes().len() - max_idx
+            pretty = pretty + ws + "[plus " + additional + " more] " + Constants.EOL
+        end if
+        return "{" + Constants.EOL + pretty + wsless + "}" + Constants.EOL
+
+    else if type == "string" then
+        pretty = Constants.QUOTE + input + Constants.QUOTE
+
+    else if type == "number" then
+        pretty = input
+
+    else if type == "null" then
+        pretty = "null"
+    end if
+
+    return pretty + Constants.EOL
+end function

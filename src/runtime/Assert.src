@@ -1,0 +1,89 @@
+#include ../shared/Constants.src
+
+#include ./Error.src
+#include ./Runtime.src
+
+// @type Assert
+Assert = {}
+
+// @description Assertion Error to be handled by the runtime ErrorHandler.
+// @example error = Assert.error("Some message")
+// @param {string} message - The message for the error.
+// @return {Error}
+Assert.error = function(message)
+    return Error.New(false, "failed_assertion", message)
+end function
+
+// @description Assert that the subject is equal to true.
+// @example Assert.is_true(true)
+// @example Assert.is_true(false) // throws Error in Runtime.
+// @example Assert.is_true(false, "Boo") // throws Error with the given message.
+// @param {any} subject - The subject to compare to true.
+// @param {string} error_message - Optional error message to embed in any errors thrown.
+// @return {number} - true or false
+Assert.is_true = function(subject, error_message)
+    if @subject == true then return true
+
+    message = "Asserting " + str(@subject) + " is true."
+    if error_message != Constants.NULL then message = error_message
+    error = Assert.error(message)
+    Runtime.throw(error)
+
+    return false
+end function
+
+// @description Assert that the subject is equal to false.
+// @example Assert.is_false(false)
+// @example Assert.is_false(true) // throws Error in Runtime.
+// @example Assert.is_false(true, "Boo") // throws Error with the given message.
+// @param {any} subject - The subject to compare to false.
+// @param {string} error_message - Optional error message to embed in any errors thrown.
+// @return {number} - true or false
+Assert.is_false = function(subject, error_message)
+    if @subject == false then return true
+
+    message = "Asserting " + str(@subject) + " is false."
+    if error_message != Constants.NULL then message = error_message
+    error = Assert.error(message)
+    Runtime.throw(error)
+
+    return false
+end function
+
+// @description Assert that the left is equal to the right.
+// @example Assert.equals(true, true)
+// @example Assert.equals(true, false) // throws Error in Runtime.
+// @example Assert.equals(true, false, "Boo") // throws Error with the given message.
+// @param {any} left - The left subject in the comparison.
+// @param {any} right - The right subject in the comparison.
+// @param {string} error_message - Optional error message to embed in any errors thrown.
+// @return {number} - true or false
+Assert.equals = function(left, right, error_message)
+    if @left == @right then return true
+
+    message = "Asserting " + str(@left) + " equals " + str(@right) + "."
+    if error_message != Constants.NULL then message = error_message
+    error = Assert.error(message)
+    Runtime.throw(error)
+
+    return false
+end function
+
+// @description Assert that the left is not equal to the right.
+// @example Assert.not_equals(true, false)
+// @example Assert.not_equals(true, true) // throws Error in Runtime.
+// @example Assert.not_equals(true, true, "Boo") // throws Error with the given message.
+// @param {any} left - The left subject in the comparison.
+// @param {any} right - The right subject in the comparison.
+// @param {string} error_message - Optional error message to embed in any errors thrown.
+// @return {number} - true or false
+Assert.not_equals = function(left, right, error_message)
+    if @left != @right then return true
+
+    message = "Asserting " + str(@left) + " not equals " + str(@right) + "."
+    if error_message != Constants.NULL then message = error_message
+    error = Assert.error(message)
+    Runtime.throw(error)
+
+    return false
+end function

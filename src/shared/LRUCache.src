@@ -1,0 +1,95 @@
+#include ./Constants.src
+
+// @type LRUCache
+// @property {number} capacity
+// @property {list<any>} cache
+LRUCache = {
+    "capacity": 0,
+    "cache": [],
+}
+
+// @description Calculate and return the size of the cache.
+// @example cache.size()
+// @return {number}
+LRUCache.size = function()
+    return self.cache.len()
+end function
+
+// @description Remove one or more oldest entries from the offset.
+// @example cache.shed() // Sheds the oldest record
+// @example cache.shed(1, 1) // Sheds the second-oldest record
+// @example cache.shed(2) // Sheds the two oldest records
+// @param {number} amount - Number of records to shed.
+// @param {number} offset - Offset to shed records from.
+// @return {number} - true if successful otherwise false.
+LRUCache.shed = function(amount = 1, offset = 0)
+    if typeof(amount) != "number" or amount < 1 or floor(amount) != amount then
+        return false
+    end if
+    if typeof(offset) != "number" or offset < 0 or floor(offset) != offset then
+        return false
+    end if
+
+    if self.size() < offset + amount then
+        return false
+    end if
+
+    for _ in range(0, amount - 1)
+        self.cache.remove(offset)
+    end for
+    return true
+end function
+
+// @description Change the capacity of the cache and shed records until the cache fits.
+// @example cache.resize(8)
+// @param {function} new_size - The cache's new size.
+// @return {number} - true if successful otherwise false.
+LRUCache.resize = function(new_size)
+    if typeof(new_size) != "number" or new_size < 0 or floor(new_size) != new_size then
+        return false
+    end if
+
+    // Drop least-recently-used to fit new size
+    if self.size() > new_size then self.shed(self.size() - new_size)
+
+    self.capacity = new_size
+    return true
+end function
+
+// @description Insert a record into the cache, potentially sheding the oldest record.
+// @example cache.insert("Some input")
+// @param {any} value - The record to insert.
+// @return {number} - true if successful otherwise false.
+LRUCache.insert = function(value)
+    if value == Constants.NULL then return false
+    if not self.capacity then return false
+
+    if self.size() >= self.capacity then self.shed()
+    self.cache.push(value)
+    return true
+end function
+
+// @description Empty the cache of all records.
+// @example cache.empty()
+// @return {undefined}
+LRUCache.empty = function()
+    num_elements = self.size()
+    if num_elements then
+        self.shed(num_elements)
+    end if
+end function
+
+// @description Instantiate a new LRUCache object.
+// @example cache = LRUCache.New(32)
+// @param {number} capacity - The capacity of the cache.
+// @return {LRUCache|number} - Returns an LRUCache on success otherwise false.
+LRUCache.New = function(capacity)
+    if typeof(capacity) != "number" or capacity < 0 or floor(capacity) != capacity then
+        return false
+    end if
+
+    cache = new LRUCache
+    cache.capacity = capacity
+    cache.cache = []
+    return cache
+end function

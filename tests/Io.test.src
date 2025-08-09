@@ -1,0 +1,103 @@
+// Include test library so we may define tests
+// We include from internal as we're relying on statically-defined Io
+#include ../src/test_internal.src
+
+// The logic we're testing
+#include ../src/runtime/Io.src
+
+// Test dependencies
+#include ../src/shared/LRUCache.src
+
+// Mock print
+__print_count = 0
+__mock_print = function(value = "", replaceText = false)
+    outer.__print_count = outer.__print_count + 1
+end function
+__mock_reset = function()
+    outer.__print_count = 0
+end function
+
+test("Io").setup = function()
+    super.setup()
+    Io.override(@__mock_print)
+end function
+
+test("Io").teardown = function()
+    __mock_reset()
+    super.teardown()
+end function
+
+test("Io").expect("init sets up correctly").is = function(assert)
+    Io.print("test print")
+    Io.error("test error")
+    Io.init()
+    assert.is_true(Io.stdio_cache isa LRUCache)
+    assert.is_true(Io.stderr_cache isa LRUCache)
+    assert.equals(@Io.print_ref, @print)
+    assert.equals(0, Io.stdio_cache.size())
+    assert.equals(0, Io.stderr_cache.size())
+end function
+
+test("Io").expect("print calls print_ref").is = function(assert)
+    assert.equals(0, Io.stdio_cache.size())
+    assert.equals(0, Io.stderr_cache.size())
+    Io.print("Testing")
+    assert.equals(1, __print_count)
+
+    // stdio checks
+    assert.equals(1, Io.stdio_cache.size())
+    assert.equals("Testing", Io.stdio_cache.cache[0].value)
+    assert.equals(false, Io.stdio_cache.cache[0].replaceText)
+
+    // stderr checks
+    assert.equals(0, Io.stderr_cache.size())
+end function
+
+test("Io").expect("error calls print_ref").is = function(assert)
+    assert.equals(0, Io.stdio_cache.size())
+    assert.equals(0, Io.stderr_cache.size())
+    Io.error("Testing")
+    assert.equals(1, __print_count)
+
+    // stdio checks
+    assert.equals(0, Io.stdio_cache.size())
+
+    // stderr checks
+    assert.equals(1, Io.stderr_cache.size())
+    assert.equals("Testing", Io.stderr_cache.cache[0].value)
+    assert.equals(false, Io.stderr_cache.cache[0].replaceText)
+end function
+
+test("Io").expect("empty_cache drops all cache items").is = function(assert)
+    assert.equals(0, Io.stdio_cache.size())
+    assert.equals(0, Io.stderr_cache.size())
+    Io.print("message 1")
+    Io.error("message 2")
+    assert.equals(2, __print_count)
+    assert.equals(1, Io.stdio_cache.size())
+    assert.equals(1, Io.stderr_cache.size())
+
+    Io.empty_cache()
+    assert.equals(0, Io.stdio_cache.size())
+    assert.equals(0, Io.stderr_cache.size())
+end function
+
+test("Io").expect("resize_cache grows and shrinks caches").is = function(assert)
+    Io.resize_cache(2, 3)
+    assert.equals(2, Io.stdio_cache.capacity)
+    assert.equals(3, Io.stderr_cache.capacity)
+    Io.resize_cache(1, 2)
+    assert.equals(1, Io.stdio_cache.capacity)
+    assert.equals(2, Io.stderr_cache.capacity)
+end function
+
+test("Io").expect("reset restores oem print and resizes cache").is = function(assert)
+    Io.resize_cache(1, 1)
+    assert.equals(1, Io.stdio_cache.capacity)
+    assert.equals(1, Io.stderr_cache.capacity)
+    assert.not_equals(@Io.print_ref, @print)
+    Io.reset()
+    assert.equals(@Io.print_ref, @print)
+end function
+
+test()

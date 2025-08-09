@@ -1,0 +1,45 @@
+// @type Error
+// @property {number} is_fatal
+// @property {string} type
+// @property {string} message
+Error = {
+    "is_fatal": true,
+    "type": "INVALID_TYPE",
+    "message": "INVALID_MESSAGE",
+}
+
+// @description Instantiate a new Error object.
+// @example error = Error.new(true, "fatal_error", "FATAL ERROR!")
+// @param {number} is_fatal - Program exits when Error is thrown.
+// @param {string} type - Arbitrary type for the Error.
+// @param {string} message - A more detailed arbitrary message for the Error.
+// @return {Error}
+Error.New = function(is_fatal = false, type = "INVALID_TYPE", message = "INVALID_MESSAGE")
+    error = new Error
+    error.is_fatal = is_fatal
+    if is_fatal != false and is_fatal != true then error.is_fatal = true
+
+    error.type = type
+    if typeof(error.type) != "string" then error.type = "INVALID_TYPE"
+
+    error.message = message
+    if typeof(error.message) != "string" then error.type = "INVALID_MESSAGE"
+
+    return error
+end function
+
+// @description Instantiate a new, fatal Error object.
+// @example error = Error.fatal("FATAL ERROR!")
+// @param {string} message - A more detailed arbitrary message for the Error.
+// @return {Error}
+Error.fatal = function(message = "")
+    return Error.New(true, "fatal_error", message)
+end function
+
+// @description Instantiate a new, non-fatal Error object.
+// @example error = Error.fatal("regular error")
+// @param {string} message - A more detailed arbitrary message for the Error.
+// @return {Error}
+Error.nonfatal = function(message = "")
+    return Error.New(false, "nonfatal_error", message)
+end function

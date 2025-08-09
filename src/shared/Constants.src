@@ -1,0 +1,22 @@
+// @description A function that returns the provided param.
+// @description Used to generate a true "undefined" variable.
+// @example undefined = __f_undefined()
+// @param {undefined} sac - Do not pass a param unless you want it returned.
+// @return {undefined}
+__f_undefined = function(sac)
+    return sac
+end function
+
+// @type Constants
+// @property {string} EOL
+// @property {string} QUOTE
+// @property {string} PRETTY_PRINT_IDX_LIMIT
+// @property {string} PRETTY_PRINT_DEPTH_LIMIT
+// @property {undefined} NULL
+Constants = {
+    "EOL": char(10),
+    "QUOTE": char(34),
+    "PRETTY_PRINT_IDX_LIMIT": 1024,
+    "PRETTY_PRINT_DEPTH_LIMIT": 64,
+}
+Constants.NULL = __f_undefined()

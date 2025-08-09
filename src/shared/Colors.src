@@ -1,0 +1,44 @@
+// @type Colors
+Colors = {}
+
+// @description Wrap a string in color tags for use with TextMeshPro.
+// @example print(Colors.black("black text"))
+// @param {string} s - The string to wrap in color tags.
+// @return {string}
+Colors.black = function(s) return "<color=black>"+s+"</color>" end function
+
+// @description Wrap a string in color tags for use with TextMeshPro.
+// @example print(Colors.blue("blue text"))
+// @param {string} s - The string to wrap in color tags.
+// @return {string}
+Colors.blue = function(s) return "<color=blue>"+s+"</color>" end function
+
+// @description Wrap a string in color tags for use with TextMeshPro.
+// @example print(Colors.green("green text"))
+// @param {string} s - The string to wrap in color tags.
+// @return {string}
+Colors.green = function(s) return "<color=green>"+s+"</color>" end function
+
+// @description Wrap a string in color tags for use with TextMeshPro.
+// @example print(Colors.orange("orange text"))
+// @param {string} s - The string to wrap in color tags.
+// @return {string}
+Colors.orange = function(s) return "<color=orange>"+s+"</color>" end function
+
+// @description Wrap a string in color tags for use with TextMeshPro.
+// @example print(Colors.red("red text"))
+// @param {string} s - The string to wrap in color tags.
+// @return {string}
+Colors.red = function(s) return "<color=red>"+s+"</color>" end function
+
+// @description Wrap a string in color tags for use with TextMeshPro.
+// @example print(Colors.white("white text"))
+// @param {string} s - The string to wrap in color tags.
+// @return {string}
+Colors.white = function(s) return "<color=white>"+s+"</color>" end function
+
+// @description Wrap a string in color tags for use with TextMeshPro.
+// @example print(Colors.yellow("yellow text"))
+// @param {string} s - The string to wrap in color tags.
+// @return {string}
+Colors.yellow = function(s) return "<color=yellow>"+s+"</color>" end function

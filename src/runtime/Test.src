@@ -1,0 +1,30 @@
+#include ../shared/Constants.src
+
+#include ./Assert.src
+
+// @type Test
+// @property {string} name
+// @property {function} is
+Test = {
+    "name": "MISSING",
+}
+
+// @description Logic for the test itself.
+// @description Will throw an Error on assertion failure.
+// @example test.is(Assert)
+// @param {Assert} assert - The Assert singleton.
+// @return {undefined}
+Test.is = function(assert)
+    assert.is_false(self.name == Test.name, "Must define test name.")
+    assert.is_true(false, "Must define test logic.")
+end function
+
+// @description Instantiate a new Test object.
+// @example test = Test.new("My new test case")
+// @param {string} name - Name of the test.
+// @return {Test}
+Test.New = function(name)
+    test = new Test
+    if name != Constants.NULL then test.name = name
+    return test
+end function

@@ -1,0 +1,2 @@
+#include ./test_internal.src
+module.exports = @test

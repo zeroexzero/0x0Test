@@ -1,0 +1,8 @@
+// @description Add 1 to `in_number` and then return the new value.
+// @example print(number_incrementor(1)) // Prints "2"
+// @param {number} in_number - The number to increment.
+// @return {number}
+number_incrementor = function(in_number)
+    if typeof(in_number) != "number" then return null
+    return in_number + 1
+end function

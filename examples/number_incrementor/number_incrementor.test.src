@@ -1,0 +1,23 @@
+// Include test library so we may define tests
+#import test from ../../src/test.src
+
+// The logic we're testing
+#include number_incrementor.src
+
+test("Number Incrementer").expect("Adds 1 to 0 equals 1").is = function(assert)
+    assert.equals(number_incrementor(0), 1)
+end function
+
+test("Number Incrementer").expect("Adds 1 to string equals null").is = function(assert)
+    assert.equals(number_incrementor("invalid"), null)
+end function
+
+// Uncomment to see failing tests
+// test("Test Library").expect("FAIL with custom message").is = function(assert)
+//     assert.equals(true, false, "Custom error")
+// end function
+// test("Test Library").expect("FAIL").is = function(assert)
+//     assert.equals(true, false)
+// end function
+
+test()

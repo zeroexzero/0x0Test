@@ -1,0 +1,52 @@
+#include ../shared/LRUCache.src
+
+#include ./Error.src
+#include ./ErrorHandler.src
+
+// @type Runtime
+// @property {ErrorHandler} error_handler
+// @property {LRUCache} error_cache
+Runtime = {
+    "error_handler": ErrorHandler,
+    "error_cache": LRUCache,
+}
+
+// @description Pass an error to the Runtime's ErrorHandler
+// @example Runtime.throw(Error.fatal("FATAL ERROR!"))
+// @param {Error} error - The Error to pass to Runtime's ErrorHandler
+// @return {undefined}
+Runtime.throw = function(error)
+    if not error isa Error then
+        ferror = Error.fatal("Cannot throw non-error")
+        Runtime.error_handler.handle(ferror, Runtime.error_cache)
+    end if
+    Runtime.error_handler.handle(error, Runtime.error_cache)
+end function
+
+// @description Replace Runtime's EventHandler with another.
+// @description Will throw a fatal Error if given error_handler isn't an ErrorHandler.
+// @example Runtime.override_event_handler(ErrorHandler.New())
+// @param {EventHandler} error_handler - ErrorHandler to replace the current ErrorHandler
+// @return {undefined}
+Runtime.override_event_handler = function(error_handler)
+    if not error_handler isa ErrorHandler then
+        error = Error.fatal("Cannot override error handler with non-ErrorHandler")
+        Runtime.error_handler.handle(error, Runtime.error_cache)
+    end if
+    Runtime.error_handler = error_handler
+end function
+
+// @description Reset Runtime's ErrorHandler and LRUCache.
+// @example Runtime.reset()
+// @return {undefined}
+Runtime.reset = function()
+    Runtime.error_handler = ErrorHandler.New()
+    Runtime.error_cache = LRUCache.New(8)
+end function
+
+// @description Setup the Runtime singleton to "base" settings.
+// @example Runtime.init()
+// @return {undefined}
+Runtime.init = function()
+    Runtime.reset()
+end function

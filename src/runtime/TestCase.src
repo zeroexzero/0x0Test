@@ -1,0 +1,76 @@
+#include ../shared/Colors.src
+#include ../shared/Constants.src
+
+#include ./Assert.src
+#include ./Io.src
+#include ./Runtime.src
+#include ./Test.src
+
+// @type TestCase
+// @property {string} name
+// @property {list<Test>} tests
+TestCase = {
+    "name": "MISSING",
+    "tests": [],
+}
+
+// @description A "setup" function that runs before every test inside this TestCase.
+// @example TestCase.setup()
+// @return {undefined}
+TestCase.setup = function()
+    no_print = function(value = "", replaceText = 0)
+        return
+    end function
+    Io.empty_cache()
+    Io.override(@no_print)
+end function
+
+// @description A "teardown" function that runs after every test inside this TestCase.
+// @example TestCase.teardown()
+// @return {undefined}
+TestCase.teardown = function()
+    Io.reset()
+    Runtime.error_cache.empty()
+end function
+
+// @description Generate and return a new Test for this TestCase.
+// @example TestCase.New("Some test case").expect("Testing a thing")
+// @param {string} name - Name of the new test.
+// @return {Test}
+TestCase.expect = function(name = "MISSING")
+    self.tests.push(Test.New(name))
+    return self.tests[-1]
+end function
+
+// @description Run all tests known to this TestCase.
+// @example TestCase.run_tests()
+// @return {undefined}
+TestCase.run_tests = function()
+    for test in self.tests
+        self.setup()
+        test.is(Assert)
+        message = "  " + test.name + "..."
+        if Runtime.error_cache.size() then
+            message = message + "[" + Colors.red("FAILED") + "]"
+            for error in Runtime.error_cache.cache
+                error_msg = "(" + error.type + "): " + error.message
+                message = message + Constants.EOL + "    " + Colors.red(error_msg)
+            end for
+        else
+            message = message + "[" + Colors.green("PASSED") + "]"
+        end if
+        self.teardown()
+        Io.print(message)
+    end for
+end function
+
+// @description Instantiate a new TestCase object.
+// @example test_case = TestCase.New("Some test case")
+// @param {string} name - Name of the new test.
+// @return {TestCase}
+TestCase.New = function(name = "MISSING")
+    test_case = new TestCase
+    test_case.name = name
+    test_case.tests = []
+    return test_case
+end function
