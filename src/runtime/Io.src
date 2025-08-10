@@ -1,7 +1,7 @@
 #include ../shared/Constants.src
 #include ../shared/LRUCache.src
 
-// @type ErrorHandler
+// @type Io
 // @property {function} print_ref
 // @property {LRUCache} stdio_cache
 // @property {LRUCache} stderr_cache
