@@ -16,10 +16,12 @@ test = function(test_case_name)
     if test_case_name == Constants.NULL then
         Runtime.init()
         Io.init()
-        queue = __test_queue
-        for test_case in queue.values()
+        queue_idx = __test_queue.indexes()
+        for idx in queue_idx
+            test_case = __test_queue[idx]
             Io.print(test_case.name)
             test_case.run_tests()
+            __test_queue.remove(idx)
         end for
         return
     end if
